@@ -1,6 +1,7 @@
 
 const router = require('express').Router();
 const { Mongoose } = require('mongoose');
+const bcrypt=require('bcryptjs');
 
 const UserModel = require('../models/user');
 const validation=require('../validation')
@@ -29,11 +30,15 @@ router.post('/register/', async (req, res) => {
             message:"User already exist."
         });
 
+        //create HASH password
+        const hashSolt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(req.body.password,hashSolt);
+
         //create user
         const user = new UserModel({
             name: req.body.name,
             email: req.body.email,
-            password: req.body.password
+            password: hashPassword
         })
 
         const savedUser = await user.save();
