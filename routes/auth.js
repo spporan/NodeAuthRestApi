@@ -1,42 +1,59 @@
 
-const router=require('express').Router();
+const router = require('express').Router();
 const { Mongoose } = require('mongoose');
-const UserModel=require('../models/user');
 
+const Joi = require("@hapi/joi");
+const UserModel = require('../models/user');
 
-router.post('/register/',async(req,res)=>{
-   
-    try{
-        const user=new UserModel({
-            name:req.body.name,
-            email:req.body.email,
-            password:req.body.password
-        })
+//Create validate fun for validate user
+function validateUser(user) {
+    const validateSchema = Joi.object({
+        name: Joi.string().min(6).required(),
+        email: Joi.string().min(6).email().required(),
+        password: Joi.string().min(6).required()
+    });
+    return validateSchema.validate(user)
+}
 
-        const savedUser=await user.save();
-        res.json(savedUser);
-    }catch(error){
-        res.status(400).json({
-            message:error
-        });
-    }
-    
+//create user 
+router.post('/register/', async (req, res) => {
+
+    const validatedUser= validateUser(req.body)
+    res.send(validatedUser);
+
+    // try {
+    //     const user = new UserModel({
+    //         name: req.body.name,
+    //         email: req.body.email,
+    //         password: req.body.password
+    //     })
+
+    //     const savedUser = await user.save();
+    //     res.json(savedUser);
+    // } catch (error) {
+    //     res.status(400).json({
+    //         message: error
+    //     });
+    // }
+
 });
 
 
-router.get('/',async(req,res)=>{
-    try{
 
-        const users=await UserModel.find();
+
+router.get('/', async (req, res) => {
+    try {
+
+        const users = await UserModel.find();
         res.json(users);
 
-    }catch(error){
+    } catch (error) {
         res.status(400).json({
-            message:error
+            message: error
         })
     }
 });
 
 
 
-module.exports=router;
+module.exports = router;
