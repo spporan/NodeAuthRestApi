@@ -18,23 +18,28 @@ function validateUser(user) {
 //create user 
 router.post('/register/', async (req, res) => {
 
-    const validatedUser= validateUser(req.body)
-    res.send(validatedUser);
 
-    // try {
-    //     const user = new UserModel({
-    //         name: req.body.name,
-    //         email: req.body.email,
-    //         password: req.body.password
-    //     })
+    //validate user
+    const {error}= validateUser(req.body)
 
-    //     const savedUser = await user.save();
-    //     res.json(savedUser);
-    // } catch (error) {
-    //     res.status(400).json({
-    //         message: error
-    //     });
-    // }
+    if(error) return res.status(400).json({
+        message:error.details[0].message
+    });
+
+    try {
+        const user = new UserModel({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password
+        })
+
+        const savedUser = await user.save();
+        res.json(savedUser);
+    } catch (error) {
+        res.status(400).json({
+            message: error
+        });
+    }
 
 });
 
