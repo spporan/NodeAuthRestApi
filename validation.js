@@ -21,4 +21,4 @@ const loginValidation=(user)=>{
 }
 
 module.exports.registrationValidation=registrationValidation
-module.loginValidation=loginValidation
+module.exports.loginValidation=loginValidation

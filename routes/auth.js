@@ -9,7 +9,7 @@ const validation=require('../validation')
 
 
 //create user 
-router.post('/register/', async (req, res) => {
+router.post('/register', async (req, res) => {
 
 
     //validate user
@@ -57,6 +57,34 @@ router.post('/register/', async (req, res) => {
 });
 
 
+//login user
+router.post('/login',async (req,res)=>{
+    //validate user
+    const {error} = validation.loginValidation(req.body)
+    if(error) return res.json({
+        message:error.details[0].message
+    });
+
+    //check user is valid or not
+    const userExist=await UserModel.findOne({email:req.body.email});
+    if(!userExist) return res.status(400).json({
+        message:"User doesn't exist."
+    });
+
+    const validPass=await bcrypt.compare(req.body.password,userExist.password);
+    if(!validPass) return res.status(400).json({
+        message:"Invalid password."
+    })
+
+    //login success
+    res.status(200).json({
+        status:"Logged in success",
+        name:userExist.name,
+        email:userExist.email,
+        createdDate:userExist.createdDate 
+    });
+
+});
 
 
 router.get('/', async (req, res) => {
