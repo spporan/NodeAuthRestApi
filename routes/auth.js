@@ -5,6 +5,7 @@ const bcrypt=require('bcryptjs');
 
 const UserModel = require('../models/user');
 const validation=require('../validation')
+const webToken=require('jsonwebtoken');
 
 
 
@@ -76,14 +77,22 @@ router.post('/login',async (req,res)=>{
         message:"Invalid password."
     })
 
-    //login success
-    res.status(200).json({
-        status:"Logged in success",
-        name:userExist.name,
-        email:userExist.email,
-        createdDate:userExist.createdDate 
-    });
+    //create and assign web token
 
+    const token=webToken.sign({_id:userExist._id},process.env.TOKEN_SECREATE)
+
+    //login success
+    res.status(200).header({auth_token:token}).json({
+        token:token,
+        status:"Logged in success",
+        user:{
+            name:userExist.name,
+            email:userExist.email,
+            createdDate:userExist.createdDate
+        }
+    })
+
+   
 });
 
 
