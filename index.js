@@ -15,12 +15,15 @@ mongoose.connect(process.env.DARABASE_CONNECT,{ useNewUrlParser: true,useUnified
 const app=express();
 //import route
 const authRoute=require('./routes/auth')
+const postRoute=require('./routes/post')
 
 //middleware for json body parser
 app.use(bodyParser.json());
 
 //added route middleware
 app.use('/api/user',authRoute);
+
+app.use('/api/post',postRoute)
 
 app.listen(process.env.PORT||3000,()=>{
     console.log('listening port 3000...');
