@@ -20,6 +20,16 @@ router.post('/register/', async (req, res) => {
     });
 
     try {
+
+        //check user is exist or not
+
+        const existUser= await UserModel.findOne({email:req.body.email});
+
+        if(existUser) return res.status(400).json({
+            message:"User already exist."
+        });
+
+        //create user
         const user = new UserModel({
             name: req.body.name,
             email: req.body.email,
