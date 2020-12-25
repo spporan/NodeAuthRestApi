@@ -2,25 +2,18 @@
 const router = require('express').Router();
 const { Mongoose } = require('mongoose');
 
-const Joi = require("@hapi/joi");
 const UserModel = require('../models/user');
+const validation=require('../validation')
 
-//Create validate fun for validate user
-function validateUser(user) {
-    const validateSchema = Joi.object({
-        name: Joi.string().min(6).required(),
-        email: Joi.string().min(6).email().required(),
-        password: Joi.string().min(6).required()
-    });
-    return validateSchema.validate(user)
-}
+
 
 //create user 
 router.post('/register/', async (req, res) => {
 
 
     //validate user
-    const {error}= validateUser(req.body)
+
+    const {error}= validation.registrationValidation(req.body);
 
     if(error) return res.status(400).json({
         message:error.details[0].message
